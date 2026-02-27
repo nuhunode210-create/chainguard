@@ -1,0 +1,73 @@
+.market-data-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-top: 4px solid #302b63;
+}
+
+.market-metrics {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.metric {
+  display: flex;
+  flex-direction: column;
+  padding: 0.8rem;
+  background: #f5f5f5;
+  border-radius: 6px;
+}
+
+.metric-label {
+  font-size: 0.8rem;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.3rem;
+}
+
+.metric-value {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #333;
+  font-family: 'Courier New', monospace;
+}
+
+.metric-value.price-change {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.market-summary {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #f0f0f0;
+}
+
+.summary-stat {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+}
+
+.summary-stat .label {
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.summary-stat .value {
+  font-weight: 600;
+  color: #333;
+  font-family: 'Courier New', monospace;
+}
+
+@media (max-width: 768px) {
+  .market-metrics {
+    grid-template-columns: 1fr;
+  }
+}

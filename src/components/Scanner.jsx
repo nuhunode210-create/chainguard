@@ -1,0 +1,82 @@
+import React, { useState } from 'react';
+import './Scanner.css';
+
+export default function Scanner({ onScan, loading }) {
+  const [tokenAddress, setTokenAddress] = useState('');
+  const [chain, setChain] = useState('solana');
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (tokenAddress.trim()) {
+      onScan(tokenAddress.trim(), chain);
+    }
+  };
+
+  return (
+    <div className="scanner-card">
+      <h2>Token Scanner</h2>
+      <p className="scanner-subtitle">Enter a contract address to analyze token security</p>
+
+      <form onSubmit={handleSubmit} className="scanner-form">
+        <div className="form-group">
+          <label htmlFor="chain">Select Blockchain</label>
+          <select
+            id="chain"
+            value={chain}
+            onChange={(e) => setChain(e.target.value)}
+            disabled={loading}
+            className="chain-select"
+          >
+            <option value="solana">Solana</option>
+            <option value="bsc">BNB Smart Chain (BSC)</option>
+          </select>
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="address">Token Contract Address</label>
+          <input
+            id="address"
+            type="text"
+            value={tokenAddress}
+            onChange={(e) => setTokenAddress(e.target.value)}
+            placeholder={chain === 'solana' ? 'Enter Solana mint address...' : 'Enter contract address (0x...)'}
+            disabled={loading}
+            className="address-input"
+          />
+          <p className="helper-text">
+            {chain === 'solana' 
+              ? 'Paste a Solana token mint address' 
+              : 'Paste an Ethereum-format contract address'}
+          </p>
+        </div>
+
+        <button
+          type="submit"
+          disabled={loading || !tokenAddress.trim()}
+          className="scan-button"
+        >
+          {loading ? (
+            <>
+              <span className="button-spinner"></span>
+              Scanning...
+            </>
+          ) : (
+            <>
+              🔍 Scan Token
+            </>
+          )}
+        </button>
+      </form>
+
+      <div className="scanner-info">
+        <h3>How it works</h3>
+        <ul>
+          <li>Enter your token contract address</li>
+          <li>Our engine analyzes security parameters</li>
+          <li>Get a risk score and entry signal instantly</li>
+          <li>Make informed trading decisions</li>
+        </ul>
+      </div>
+    </div>
+  );
+}
