@@ -73,3 +73,18 @@ export default function RiskCard({ data }) {
     </div>
   );
 }
+const fetchDexData = async (tokenAddress) => {
+  try {
+    const res = await fetch("/api/dexscan", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ address: tokenAddress })
+    });
+    if (!res.ok) throw new Error("Failed to fetch token data");
+    const data = await res.json();
+    return data;
+  } catch (err) {
+    console.error(err);
+    return null;
+  }
+};
