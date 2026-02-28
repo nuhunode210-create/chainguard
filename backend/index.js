@@ -189,3 +189,8 @@ app.listen(PORT, '0.0.0.0', () => {
   console.log('- GET /api/health - Health check');
 });import dexScanRouter from './dexscan.js';
 app.use(dexScanRouter);
+// At the top with other imports
+import dexScanRouter from './dexscan.js';
+
+// After your middleware (app.use(cors(), app.use(express.json())))
+app.use(dexScanRouter);
