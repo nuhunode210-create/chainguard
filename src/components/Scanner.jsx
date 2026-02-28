@@ -111,3 +111,12 @@ const fetchDexData = async (tokenAddress) => {
     return null;
   }
 };
+{dexInfo && (
+  <div className="dex-info">
+    <h3>DEX Info</h3>
+    <p><strong>Price:</strong> ${dexInfo.priceUsd}</p>
+    <p><strong>Liquidity:</strong> ${dexInfo.liquidity.usd}</p>
+    <p><strong>24h Volume:</strong> ${dexInfo.volume.h24}</p>
+    <p><strong>DEX:</strong> {dexInfo.dexId}</p>
+  </div>
+)}
