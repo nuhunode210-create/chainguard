@@ -4,25 +4,42 @@ import './Scanner.css';
 export default function Scanner({ onScan, loading }) {
   const [tokenAddress, setTokenAddress] = useState('');
   const [chain, setChain] = useState('solana');
+  const [dexInfo, setDexInfo] = useState(null); // <-- DexScreener state inside component
 
-const handleSubmit = async (e) => {
-  e.preventDefault(); // stop page refresh
-  if (!tokenAddress.trim()) return;
+  // Function to fetch DexScreener data
+  const fetchDexData = async (tokenAddress) => {
+    try {
+      const res = await fetch("/api/dexscan", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ address: tokenAddress })
+      });
+      if (!res.ok) throw new Error("Failed to fetch token data");
+      const data = await res.json();
+      return data;
+    } catch (err) {
+      console.error(err);
+      return null;
+    }
+  };
 
-  // Keep your original scan call
-  if (onScan) {
-    onScan(tokenAddress.trim(), chain);
-  }
+  // Handle scanning form submit
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!tokenAddress.trim()) return;
 
-  // Fetch DexScreener info
-  const dexData = await fetchDexData(tokenAddress.trim());
+    // Original scan call
+    if (onScan) onScan(tokenAddress.trim(), chain);
 
-  if (dexData && dexData.pairs && dexData.pairs.length > 0) {
-    setDexInfo(dexData.pairs[0]); // save first pair
-  } else {
-    setDexInfo(null); // no data found
-  }
-};
+    // Fetch DexScreener data
+    const dexData = await fetchDexData(tokenAddress.trim());
+    if (dexData && dexData.pairs && dexData.pairs.length > 0) {
+      setDexInfo(dexData.pairs[0]); // save first pair
+    } else {
+      setDexInfo(null);
+    }
+  };
+
   return (
     <div className="scanner-card">
       <h2>Token Scanner</h2>
@@ -72,12 +89,21 @@ const handleSubmit = async (e) => {
               Scanning...
             </>
           ) : (
-            <>
-              🔍 Scan Token
-            </>
+            <>🔍 Scan Token</>
           )}
         </button>
       </form>
+
+      {/* Show DexScreener info here */}
+      {dexInfo && (
+        <div className="dex-info">
+          <h3>DEX Info</h3>
+          <p><strong>Price:</strong> ${dexInfo.priceUsd}</p>
+          <p><strong>Liquidity:</strong> ${dexInfo.liquidity.usd}</p>
+          <p><strong>24h Volume:</strong> ${dexInfo.volume.h24}</p>
+          <p><strong>DEX:</strong> {dexInfo.dexId}</p>
+        </div>
+      )}
 
       <div className="scanner-info">
         <h3>How it works</h3>
@@ -91,32 +117,3 @@ const handleSubmit = async (e) => {
     </div>
   );
 }
-// Store DexScreener info after scanning
-const [dexInfo, setDexInfo] = useState(null);
-// Fetch DexScreener info for a token
-const fetchDexData = async (tokenAddress) => {
-  try {
-    const res = await fetch("/api/dexscan", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ address: tokenAddress })
-    });
-
-    if (!res.ok) throw new Error("Failed to fetch token data");
-
-    const data = await res.json();
-    return data;
-  } catch (err) {
-    console.error(err);
-    return null;
-  }
-};
-{dexInfo && (
-  <div className="dex-info">
-    <h3>DEX Info</h3>
-    <p><strong>Price:</strong> ${dexInfo.priceUsd}</p>
-    <p><strong>Liquidity:</strong> ${dexInfo.liquidity.usd}</p>
-    <p><strong>24h Volume:</strong> ${dexInfo.volume.h24}</p>
-    <p><strong>DEX:</strong> {dexInfo.dexId}</p>
-  </div>
-)}
