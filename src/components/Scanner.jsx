@@ -5,13 +5,24 @@ export default function Scanner({ onScan, loading }) {
   const [tokenAddress, setTokenAddress] = useState('');
   const [chain, setChain] = useState('solana');
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (tokenAddress.trim()) {
-      onScan(tokenAddress.trim(), chain);
-    }
-  };
+const handleSubmit = async (e) => {
+  e.preventDefault(); // stop page refresh
+  if (!tokenAddress.trim()) return;
 
+  // Keep your original scan call
+  if (onScan) {
+    onScan(tokenAddress.trim(), chain);
+  }
+
+  // Fetch DexScreener info
+  const dexData = await fetchDexData(tokenAddress.trim());
+
+  if (dexData && dexData.pairs && dexData.pairs.length > 0) {
+    setDexInfo(dexData.pairs[0]); // save first pair
+  } else {
+    setDexInfo(null); // no data found
+  }
+};
   return (
     <div className="scanner-card">
       <h2>Token Scanner</h2>
@@ -80,3 +91,23 @@ export default function Scanner({ onScan, loading }) {
     </div>
   );
 }
+// Store DexScreener info after scanning
+const [dexInfo, setDexInfo] = useState(null);
+// Fetch DexScreener info for a token
+const fetchDexData = async (tokenAddress) => {
+  try {
+    const res = await fetch("/api/dexscan", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ address: tokenAddress })
+    });
+
+    if (!res.ok) throw new Error("Failed to fetch token data");
+
+    const data = await res.json();
+    return data;
+  } catch (err) {
+    console.error(err);
+    return null;
+  }
+};
