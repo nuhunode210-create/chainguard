@@ -187,4 +187,5 @@ app.listen(PORT, '0.0.0.0', () => {
   console.log('- GET /api/history - Get scan history');
   console.log('- GET /api/token/:address/:chain - Get token details');
   console.log('- GET /api/health - Health check');
-});
+});import dexScanRouter from './dexscan.js';
+app.use(dexScanRouter);
